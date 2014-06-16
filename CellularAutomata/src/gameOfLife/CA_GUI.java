@@ -3,25 +3,28 @@ package gameOfLife;
 
 
 
+import java.awt.Button;
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
- 
+
 import javax.swing.*;
  
 public class CA_GUI extends JPanel
-        implements MouseListener {
+        implements ActionListener {
     CA_GUI_GridContainer gridArea;
     static GameOfLife model;
     static CA_GUI gui_instance;
-    JTextArea textArea;
+    //JTextArea textArea;
     static final String NEWLINE = System.getProperty("line.separator");
+    Button startButton;
     
-    boolean started = true;
+    boolean started = false;
     int millisecondsBetweenFrames = 1000;
     ActionListener listener = null;
     Timer displayTimer = null;
@@ -159,8 +162,10 @@ public class CA_GUI extends JPanel
     	model.computeNextState();
     	//update the GUI
     	gridArea.repaint();
+    	/*
     	textArea.append("Timestep: " + model.getCurrentStep() + NEWLINE);
         textArea.setCaretPosition(textArea.getDocument().getLength());    	//System.out.println("tick was called!");
+        */
     }
     
     
@@ -168,6 +173,7 @@ public class CA_GUI extends JPanel
         super(new GridLayout(0,1));
                 gridArea = new CA_GUI_GridContainer(model.getRows(),model.getColumns(), model);
         add(gridArea);
+        /*
         textArea = new JTextArea();
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -175,10 +181,40 @@ public class CA_GUI extends JPanel
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(200, 75));
         add(scrollPane);
-         
+         */
+        JPanel controlsArea = new JPanel(new GridLayout(0,3));
+        controlsArea.add(new Button("Reset"));
+        controlsArea.add(new Label("Size:", java.awt.Label.RIGHT));
+        SpinnerModel sizeModel =
+                new SpinnerNumberModel(model.getRows(), //initial value
+                                       1, //min
+                                       1000, //max
+                                       1);//step
+        
+        controlsArea.add(new JSpinner(sizeModel));
+        startButton = new Button("Start");
+        
+        controlsArea.add(startButton);
+        controlsArea.add(new Label("Delay:", java.awt.Label.RIGHT));        
+        SpinnerModel delayModel =
+                new SpinnerNumberModel(50, //initial value
+                                       0, //min
+                                       5000, //max
+                                       1);//step
+        
+        controlsArea.add(new JSpinner(delayModel));
+        controlsArea.add(new Label("Current step: 0"));  
+        controlsArea.add(new Button("Next generation"));
+        controlsArea.add(new Button("Load from file"));
+        add(controlsArea);
+       
+      
+        
+        
+        
         //Register for mouse events on blankArea and the panel.
         //gridArea.addMouseListener(this);
-        addMouseListener(this);
+        //addMouseListener(this);
         setPreferredSize(new Dimension(450, 450));
         setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         
@@ -186,6 +222,9 @@ public class CA_GUI extends JPanel
         
         listener = new ActionListener(){
         	  public void actionPerformed(ActionEvent event){
+        		if(!started){
+        			displayTimer.stop();
+        		}
         	    tick();
         	  }
         	};
@@ -199,12 +238,14 @@ public class CA_GUI extends JPanel
     }
      
     void eventOutput(String eventDescription, MouseEvent e) {
+    	/*
         textArea.append(eventDescription + " detected on "
                 + e.getComponent().getClass().getName()
                 + "." + NEWLINE);
         textArea.setCaretPosition(textArea.getDocument().getLength());
+        */
     }
-     
+     /*
     public void mousePressed(MouseEvent e) {
       //  eventOutput("Mouse pressed (# of clicks: " + e.getClickCount() + ")", e);
     }
@@ -224,4 +265,10 @@ public class CA_GUI extends JPanel
     public void mouseClicked(MouseEvent e) {
         //eventOutput("Mouse clicked (# of clicks: "+ e.getClickCount() + ")", e);
     }
+*/
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }
